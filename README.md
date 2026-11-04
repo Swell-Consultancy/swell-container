@@ -62,34 +62,6 @@ const explicitSingleton = container.resolve('AnotherDesired.Namespace.ExplicitSi
 const transient = container.resolve('YetAnotherDesired.Namespace.Transient');
 ```
 
-### Contextual bindings
-
-Use `contextual` to select a factory by a string or string enum value. Each context has its own scope and singleton instance.
-
-```typescript
-const container = SwellContainer.init({
-  'Desired.Namespace.Service': {
-    factory: () => new ClassA('Default'),
-    contextual: {
-      reporting: {
-        factory: () => new ClassA('Reporting'),
-      },
-      preview: {
-        scope: 'transient',
-        factory: () => new ClassB('Preview'),
-      },
-    },
-  },
-});
-
-const reporting = container.resolve('Desired.Namespace.Service', { context: 'reporting' });
-const preview = container.resolve('Desired.Namespace.Service', { context: 'preview' });
-const defaultService = container.resolve('Desired.Namespace.Service');
-```
-
-Contextual scopes default to singleton. The default factory is optional when every resolution supplies a context.
-Unknown contexts throw a binding-not-found error.
-
 ## Use Swell Container for Dependency Injection in Nuxt
 
 In Nuxt, you can initialize the Swell Container in a Util:
