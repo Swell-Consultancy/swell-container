@@ -26,7 +26,16 @@ expectTypeOf(container.resolve('ordinary')).toEqualTypeOf<Date>();
 const ordinaryRegistry: Record<string, BindingConfig<Date>> = { date: { factory: () => new Date() } };
 expectTypeOf(SwellContainer.init(ordinaryRegistry).resolve('date')).toEqualTypeOf<Date>();
 const annotatedRegistry: ContainerRegistry = { date: { factory: () => new Date() } };
-expectTypeOf(SwellContainer.init(annotatedRegistry).resolve('date')).toEqualTypeOf<unknown>();
+// @ts-expect-error Broad registry types do not guarantee a default factory.
+SwellContainer.init(annotatedRegistry).resolve('date');
+const checkedRegistry = { date: { factory: () => new Date() } } satisfies ContainerRegistry;
+expectTypeOf(SwellContainer.init(checkedRegistry).resolve('date')).toEqualTypeOf<Date>();
+
+declare const unionRegistry: {
+  service: BindingConfig<number> | { contextual: { text: BindingConfig<string> } };
+};
+// @ts-expect-error A union binding may not provide a default factory.
+SwellContainer.init(unionRegistry).resolve('service');
 
 const context: 'text' | Context.Number = Math.random() > 0.5 ? 'text' : Context.Number;
 expectTypeOf(container.resolve('service', { context })).toEqualTypeOf<string | number>();
