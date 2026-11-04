@@ -150,6 +150,36 @@ describe('SwellContainer - Contextual Bindings', () => {
       .toBe(container.resolve('service', { context: 'singleton' }));
   });
 
+  it('preserves singleton caches created by nested resolution under the same alias', () => {
+    let outerCalls = 0;
+    let innerCalls = 0;
+    const nested = SwellContainer.init({
+      service: {
+        contextual: {
+          outer: {
+            factory: (): { inner: { name: string } } => {
+              outerCalls++;
+              return { inner: nested.resolve('service', { context: 'inner' }) };
+            },
+          },
+          inner: {
+            factory: () => {
+              innerCalls++;
+              return { name: 'Inner' };
+            },
+          },
+        },
+      },
+    });
+
+    const outer = nested.resolve('service', { context: 'outer' });
+
+    expect(nested.resolve('service', { context: 'outer' })).toBe(outer);
+    expect(nested.resolve('service', { context: 'inner' })).toBe(outer.inner);
+    expect(outerCalls).toBe(1);
+    expect(innerCalls).toBe(1);
+  });
+
   it('caches undefined singleton values', () => {
     let calls = 0;
     const container = SwellContainer.init({
@@ -164,9 +194,12 @@ describe('SwellContainer - Contextual Bindings', () => {
   it('throws for missing contexts without falling back to the default factory', () => {
     // @ts-expect-error Context keys are restricted to the registered contexts.
     expect(() => container.resolve('service', { context: 'missing' }))
-      .toThrow('Binding not found for alias: service in context: missing');
+      .toThrow('Binding not found for alias: service in context: "missing"');
     // @ts-expect-error Ordinary bindings do not have contexts.
     expect(() => container.resolve('ordinary', { context: 'first' })).toThrow(BindingNotFound);
+    // @ts-expect-error Ordinary bindings do not have contexts.
+    expect(() => container.resolve('ordinary', { context: '' }))
+      .toThrow('Binding not found for alias: ordinary in context: ""');
     // @ts-expect-error Context-only bindings require a context.
     expect(() => container.resolve('contextualOnly')).toThrow(BindingNotFound);
   });
