@@ -4,7 +4,7 @@ import type { BindingConfig } from './contracts/BindingConfig';
 
 type BindingInstance<T> = T extends BindingConfig<infer TInstance> ? TInstance : never;
 type DefaultAlias<T> = {
-  [K in keyof T]: Extract<T[K], BindingConfig<unknown>> extends never ? never : K;
+  [K in keyof T]: [T[K]] extends [BindingConfig<unknown>] ? K : never;
 }[keyof T];
 type ContextualBindings<T> = T extends { contextual?: infer TBindings } ? NonNullable<TBindings> : {};
 
@@ -59,7 +59,7 @@ export class SwellContainer<TRegistry extends ContainerRegistry> {
     const instance = config.factory();
 
     if (!isTransient) {
-      const cache = instances ?? new Map<string | undefined, unknown>();
+      const cache = this.instances.get(alias) ?? new Map<string | undefined, unknown>();
       cache.set(context, instance);
       this.instances.set(alias, cache);
     }
