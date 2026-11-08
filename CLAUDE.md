@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-`@swell-enterprise/container` — a lightweight, decorator-free, strictly-typed DI container for TypeScript. It's the foundational DI layer of the Swell Enterprise Ecosystem (DDD/CQRS/Event Sourcing) and must stay framework-agnostic (Node, Deno, browser). Pre-1.0: breaking changes are acceptable.
+`@swell-consultancy/container` — a lightweight, decorator-free, strictly-typed DI container for TypeScript. It's the foundational DI layer of the Swell Enterprise Ecosystem (DDD/CQRS/Event Sourcing) and must stay framework-agnostic (Node, Deno, browser). Pre-1.0: breaking changes are acceptable.
 
 ## Commands
 
