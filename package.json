@@ -1,6 +1,6 @@
 {
-  "name": "@swell-enterprise/container",
-  "version": "0.0.10",
+  "name": "@swell-consultancy/container",
+  "version": "0.0.11",
   "description": "A simple DI container for TypeScript projects.",
   "author": "Keith Mifsud <mifsud.k@gmail.com> (https://keith-mifsud.me)",
   "license": "Apache-2.0",
@@ -14,12 +14,12 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/keithmifsud/swell-container.git"
+    "url": "https://github.com/Swell-Consultancy/swell-container.git"
   },
   "bugs": {
-    "url": "https://github.com/keithmifsud/swell-container/issues"
+    "url": "https://github.com/Swell-Consultancy/swell-container/issues"
   },
-  "homepage": "https://keith-mifsud.me/collaborate/",
+  "homepage": "https://github.com/Swell-Consultancy/swell-container#readme",
   "exports": {
     ".": {
       "import": {
