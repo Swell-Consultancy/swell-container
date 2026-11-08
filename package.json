@@ -1,6 +1,6 @@
 {
   "name": "@swell-consultancy/container",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "A simple DI container for TypeScript projects.",
   "author": "Keith Mifsud <mifsud.k@gmail.com> (https://keith-mifsud.me)",
   "license": "Apache-2.0",
@@ -37,7 +37,8 @@
     "LICENSE"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "build": "tsdown src/index.ts --format esm,cjs --dts",
