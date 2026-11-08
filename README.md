@@ -1,6 +1,6 @@
 # Swell Container
 
-[![npm version](https://badge.fury.io/js/@swell-enterprise%2Fcontainer.svg)](https://badge.fury.io/js/@swell-enterprise%2Fcontainer)
+[![npm version](https://badge.fury.io/js/@swell-consultancy%2Fcontainer.svg)](https://badge.fury.io/js/@swell-consultancy%2Fcontainer)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 > ⚠ This package is in **active development** and should not be used in production yet. Expect breaking changes until
@@ -21,7 +21,7 @@ improving testability.
 ## Installation
 
 ```bash
-pnpm i @swell-enterprise/container
+pnpm i @swell-consultancy/container
 ```
 
 ## Usage
@@ -29,7 +29,7 @@ pnpm i @swell-enterprise/container
 Initialize the container and register your dependencies somewhere in your application startup code:
 
 ```typescript
-import { SwellContainer } from '@swell-enterprise/container';
+import { SwellContainer } from '@swell-consultancy/container';
 
 const registry = {
   // Default scope (implicit singleton)
@@ -68,7 +68,7 @@ In Nuxt, you can initialize the Swell Container in a Util:
 
 ```typescript
 // utils/container.ts
-import { SwellContainer } from '@swell-enterprise/container';
+import { SwellContainer } from '@swell-consultancy/container';
 
 const registry = {
   'Desired.Namespace.DefaultSingleton': {
