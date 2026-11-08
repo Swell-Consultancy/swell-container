@@ -4,6 +4,7 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "declaration": true,
+    "noEmit": true
   },
     "include": ["src"],
 }
