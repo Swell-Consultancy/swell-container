@@ -43,7 +43,7 @@
   "scripts": {
     "build": "tsdown src/index.ts --format esm,cjs --dts",
     "dev": "tsdown src/index.ts --format esm,cjs --dts --watch",
-    "test": "vitest run",
+    "test": "vitest run --typecheck --typecheck.tsconfig tests/tsconfig.json",
     "typecheck": "tsc --noEmit",
     "package": "pnpm pack",
     "prepublishOnly": "pnpm run build && publint && attw --pack"
