@@ -1,0 +1,15 @@
+name-template: v$RESOLVED_VERSION
+tag-template: v$RESOLVED_VERSION
+tag-prefix: v
+template: $CHANGES
+categories:
+  - type: version-resolver
+    when:
+      label: release:major
+    semver-increment: major
+  - type: version-resolver
+    when:
+      label: release:minor
+    semver-increment: minor
+  - type: version-resolver
+    semver-increment: patch

@@ -1,0 +1,86 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: release-main
+  queue: max
+
+jobs:
+  merged-pr:
+    if: ${{ !github.event.created && !github.event.deleted && !github.event.forced }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      labels: ${{ steps.check.outputs.labels }}
+    steps:
+      - id: check
+        name: Identify the merged main PR for this push
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/pulls" |
+            jq -r '[.[][] | select(.merged_at and .base.ref == "main" and
+              .base.repo.full_name == env.GITHUB_REPOSITORY and .merge_commit_sha == env.GITHUB_SHA)] |
+              if length == 0 then empty
+              elif length == 1 then "labels=" + ([.[0].labels[].name |
+                select(. == "release:minor" or . == "release:major")] | sort | tojson)
+              else error("Multiple merged PRs match this push") end' >> "$GITHUB_OUTPUT"
+        shell: bash
+
+  publish:
+    needs: merged-pr
+    if: needs.merged-pr.outputs.labels != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+      id-token: write
+    env:
+      NPM_CONFIG_REGISTRY: https://registry.npmjs.org/
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3.0.0
+        with:
+          runtime: node@26
+          require-lockfile: true
+      - name: Verify the previous release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BEFORE: ${{ github.event.before }}
+        shell: bash
+        run: |
+          gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/releases" |
+            jq -e 'all(.[][]; .draft == false)' || { echo "::error::Resolve outstanding drafts first."; exit 1; }
+          tag=$(gh release view --json tagName --jq .tagName)
+          latest=$(npm view @swell-consultancy/container@latest version)
+          [[ "$tag" == "v$latest" && "$(git rev-parse "refs/tags/$tag^{commit}")" == "$BEFORE" ]] ||
+            { echo "::error::The latest npm version, GitHub Release and previous main commit must agree."; exit 1; }
+      - name: Draft the release
+        id: draft
+        uses: release-drafter/release-drafter@978bb0b30c5ee8cdd332ced253758157150d43f0 # v7.10.0
+        with:
+          commitish: ${{ github.sha }}
+      - name: Publish the validated package
+        env:
+          VERSION: ${{ steps.draft.outputs.resolved_version }}
+          TAG: ${{ steps.draft.outputs.tag_name }}
+        run: |
+          [[ -n "$VERSION" && "$TAG" == "v$VERSION" && -z "$(git tag --list "$TAG")" ]] ||
+            { echo "::error::Expected a new version and an unused matching tag."; exit 1; }
+          npm version "$VERSION" --no-git-tag-version --ignore-scripts
+          pnpm run prepublishOnly
+          pnpm dlx npm@11.20.0 publish --ignore-scripts --provenance --access public
+      - name: Publish the drafted GitHub Release and tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_ID: ${{ steps.draft.outputs.id }}
+        run: gh api --method PATCH "repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID" -F draft=false --silent
