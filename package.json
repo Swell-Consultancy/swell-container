@@ -14,7 +14,7 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/Swell-Consultancy/swell-container.git"
+    "url": "git+https://github.com/Swell-Consultancy/swell-container.git"
   },
   "bugs": {
     "url": "https://github.com/Swell-Consultancy/swell-container/issues"
@@ -55,7 +55,7 @@
     "container",
     "typescript"
   ],
-  "packageManager": "pnpm@11.12.0",
+  "packageManager": "pnpm@12.18.0",
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
     "publint": "^0.3.21",

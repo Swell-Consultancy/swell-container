@@ -98,3 +98,9 @@ Scale your business with expert support from [Keith Mifsud](https://keith-mifsud
 the [Swell Consultancy team](https://swell-consultancy.com). We become your partner in building systems that run your
 business. 
 
+## Releases
+
+Merging a PR into `main` publishes a patch by default. Use `release:minor` or `release:major` for a larger bump.
+The workflow versions the package in CI, publishes to npm with provenance, then publishes the matching GitHub Release and tag.
+If a run stops after drafting, check npm and the draft's target commit before retrying. If npm already has the intended
+artifact, finalize its matching draft. If npm has no such version, remove the stale draft and rerun the failed workflow.
