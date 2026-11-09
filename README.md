@@ -92,6 +92,29 @@ export const container = SwellContainer.init(registry);
 Please open an issue on GitHub if you encounter any problems or have questions about using the Swell Container. We
 welcome contributions and feedback from the community to help improve the package.
 
+## CI and releases
+
+PRs into `develop` and `main` run tests, typecheck, build, publint and attw.
+Merged PRs into `main` publish to npm using `.github/workflows/release.yml`.
+The next version comes from npm's `latest` version: no release label means patch,
+`release:minor` means minor, and `release:major` means major. Conflicting release
+labels fail CI and release. For the first release, label the PR `release:minor`
+to advance `0.0.12` to `0.1.0`.
+
+Before the first release, configure a GitHub Actions **Trusted Publisher** in the
+[npm package settings](https://www.npmjs.com/package/@swell-consultancy/container/access):
+organization `Swell-Consultancy`, repository `swell-container`, workflow filename
+`release.yml`, and no environment. No npm token or GitHub Actions npm secret is
+needed. See [npm's Trusted Publishing documentation](https://docs.npmjs.com/trusted-publishers/).
+Allow the workflow's `GITHUB_TOKEN` to create tags and GitHub Releases under any
+repository tag rules. Configure the `CI / checks` job as required in branch protection.
+
+Releases queue without cancelling earlier merges. Rerun a failed release to
+recover missing tags or GitHub Releases; npm's published `gitHead` prevents
+publishing another version of the same merge. The version changes only in the
+runner's working copy, and `vX.Y.Z` tags point to the merged commit. The workflow
+never pushes a version commit to `main`, so the checked-in version can lag npm.
+
 ## Enterprise Support
 
 Scale your business with expert support from [Keith Mifsud](https://keith-mifsud.me/collaborate/) and
