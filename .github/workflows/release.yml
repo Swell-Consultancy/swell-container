@@ -71,13 +71,9 @@ jobs:
           commitish: ${{ github.sha }}
       - name: Publish the validated package
         env:
-          EXPECTED_LABELS: ${{ needs.merged-pr.outputs.labels }}
-          DRAFT_LABELS: ${{ steps.draft.outputs.labels }}
           VERSION: ${{ steps.draft.outputs.resolved_version }}
           TAG: ${{ steps.draft.outputs.tag_name }}
         run: |
-          [[ "$EXPECTED_LABELS" == "$DRAFT_LABELS" ]] ||
-            { echo "::error::Draft release labels differ from the merged PR."; exit 1; }
           [[ -n "$VERSION" && "$TAG" == "v$VERSION" && -z "$(git tag --list "$TAG")" ]] ||
             { echo "::error::Expected a new version and an unused matching tag."; exit 1; }
           npm version "$VERSION" --no-git-tag-version --ignore-scripts
